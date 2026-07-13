@@ -1,0 +1,91 @@
+# AIOC Incident Knowledge Base — System Architecture Context
+# Document type: contextual-knowledge
+# Tags: architecture, services, dependencies, sla, team-ownership
+
+## Service Catalog
+
+### payment-api
+- Team: Payments Platform
+- On-call: payments-oncall@company.com | Slack: #payments-platform
+- SLA: p99 < 500ms, error rate < 0.1%, availability 99.99%
+- Critical dependencies: postgres-primary, redis-cluster, tax-service, fraud-service
+- DB pool config: pool_size=20, max_overflow=10, pool_timeout=30s
+- Revenue impact: $480-640/min during P0 outage
+- Deployment cadence: Daily at 10:00 UTC (business hours only)
+
+### search-api
+- Team: Discovery Engineering
+- On-call: search-oncall@company.com | Slack: #search-platform
+- SLA: p99 < 200ms, error rate < 0.5%, availability 99.95%
+- Critical dependencies: elasticsearch-cluster, redis-cluster-search, catalog-db
+- Cache TTL: 300s default, 60s for trending queries
+- Revenue impact: ~$200/min during P0 (conversion rate drops 40%)
+
+### checkout-gateway
+- Team: Checkout Platform
+- On-call: checkout-oncall@company.com | Slack: #checkout-platform
+- SLA: p99 < 1000ms, error rate < 0.2%, availability 99.99%
+- Critical dependencies: payment-api, search-api, inventory-service, tax-service
+- Revenue impact: $1200-1800/min during P0 (highest revenue path)
+- Known issues: Retry storm amplification when payment-api degrades
+
+### order-processor
+- Team: Order Management
+- On-call: orders-oncall@company.com | Slack: #order-platform
+- SLA: p99 < 2000ms (async), error rate < 0.5%
+- Critical dependencies: kafka (orders topic), payment-api, inventory-service, notification-service
+- Revenue impact: $80-120/min during P0
+
+### catalog-api
+- Team: Catalog Platform
+- On-call: catalog-oncall@company.com | Slack: #catalog-platform
+- SLA: p99 < 300ms, error rate < 1%
+- Revenue impact: $60-90/min during P0
+
+---
+
+## Infrastructure
+
+### Database Clusters
+- pg-primary: Main RDS Postgres 14 — us-east-1a, Multi-AZ enabled
+- pg-replica-01/02: Read replicas for reporting and non-transactional reads
+- Max connections: 500 (shared across all services)
+- Connection pool best practice: pool_size = (DB max_connections / num_services / num_pods) - 5
+
+### Cache Clusters
+- redis-cluster (payments): 6-node cluster, 64GB, eviction=allkeys-lru
+- redis-cluster-search: 3-node cluster, 32GB, eviction=volatile-lru
+
+### Kubernetes
+- Cluster: prod-eks-us-east-1 (EKS 1.28)
+- HPA enabled on all services: min=2, max=20 pods
+- PodDisruptionBudget: minAvailable=1 for critical services
+
+---
+
+## Escalation Policy
+
+| Severity | Response Time | Escalation After |
+|----------|--------------|-----------------|
+| P0       | 5 min        | 15 min → VP Eng |
+| P1       | 15 min       | 30 min → Director |
+| P2       | 1 hour       | 2 hours → Manager |
+| P3       | Next business day | — |
+
+### War Room Channel
+- Slack: #incident-war-room
+- Bridge: https://meet.company.com/incident
+- Status page: https://status.company.com
+
+---
+
+## Common Root Causes and Their Signatures
+
+| Root Cause | Key Log Pattern | Primary Metric |
+|-----------|----------------|---------------|
+| DB pool exhaustion | "Connection pool exhausted" | db_pool_utilization > 90% |
+| Cache stampede | "cache miss rate 95%" | cache_hit_rate < 10% |
+| Retry storm | "retry amplification" | upstream_rps / service_rps > 3x |
+| Memory leak | "GC pause > 2000ms" | jvm_heap_used > 85% |
+| Deployment regression | Error spike after deploy | error_rate delta vs pre-deploy |
+| Downstream degradation | "circuit breaker OPEN" | downstream_latency_p99 > timeout |

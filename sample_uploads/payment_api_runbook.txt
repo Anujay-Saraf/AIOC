@@ -1,0 +1,85 @@
+# Payment API Incident Runbook
+# Service: payment-api  Version: 2.1  Owner: payments-platform-team
+
+## Overview
+This runbook covers common failure modes for the Payment API service and provides
+step-by-step remediation procedures for on-call engineers.
+
+---
+
+## Incident: Database Connection Pool Exhaustion
+
+### Symptoms
+- HTTP 500/503 errors on POST /api/v1/payments
+- DB pool utilization > 90% in Grafana dashboard "Payment API / DB Health"
+- Logs: "Connection pool exhausted" or "PSQLException: Connection is not available"
+- Affected users: checkout failures, payment declines
+
+### Impact
+- Severity: P0 Critical
+- Revenue impact: ~$600/min
+- Blast radius: All payment processing, order confirmations, refunds
+
+### Root Cause Indicators
+1. DB pool size too small relative to traffic (check pool_size in config)
+2. Slow queries holding connections (check pg_stat_activity for long-running queries)
+3. Connection leak in PaymentSessionCache (check heap usage)
+4. Downstream service timeouts causing connection hold (check tax-service latency)
+
+### Remediation Steps
+
+#### Immediate (< 5 min)
+1. Scale up pool size: `kubectl set env deployment/payment-api DB_POOL_SIZE=40`
+2. Restart pods with rolling update: `kubectl rollout restart deployment/payment-api`
+3. Kill long-running DB queries: `SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE duration > interval '30 seconds'`
+4. Enable connection throttling: POST /admin/throttle {"rps": 200}
+
+#### Short-term (< 30 min)
+1. Review recent deployments in ArgoCD for config changes to pool_size
+2. Check if PaymentSessionCache TTL was reduced (causes more DB reads)
+3. Scale DB read replicas: `terraform apply -var="read_replica_count=3"`
+4. Enable read-replica routing for non-transactional queries
+
+#### Long-term
+1. Implement connection pool monitoring alert at 75% threshold (currently 90%)
+2. Add PgBouncer as connection pooler between app and Postgres
+3. Implement cache-aside pattern for PaymentSessionCache to reduce DB reads
+4. Load test with new pool_size before production deployments
+
+### Rollback
+- If scale-up makes things worse: `kubectl rollout undo deployment/payment-api`
+- Revert config: `kubectl set env deployment/payment-api DB_POOL_SIZE=20`
+
+### Contacts
+- On-call: payments-oncall@company.com
+- Escalation: @payments-platform in #incident-response Slack
+- DB Admin: dba-oncall@company.com
+
+---
+
+## Incident: Circuit Breaker Open on Downstream
+
+### Symptoms
+- HTTP 503 errors with "circuit breaker OPEN" in logs
+- Downstream service (tax-service, fraud-service) health check failing
+
+### Remediation
+1. Check downstream service health: `curl https://tax-service.internal/health`
+2. If downstream is recovering, manually close circuit: POST /admin/circuit-breaker/close {"service": "tax-service"}
+3. If downstream is still down, enable cached fallback mode: POST /admin/fallback/enable
+4. Monitor error rate in Datadog dashboard "Payment API / Circuit Breakers"
+
+---
+
+## Incident: GC Pause / Memory Pressure
+
+### Symptoms
+- GC pause > 2000ms in logs
+- Heap usage > 85%
+- Response time degradation without increased traffic
+
+### Remediation
+1. Trigger heap dump for analysis: `jmap -dump:format=b,file=/tmp/heap.hprof <pid>`
+2. Increase JVM heap: `kubectl set env deployment/payment-api JAVA_OPTS="-Xmx10g -Xms8g"`
+3. Restart pod: `kubectl delete pod <pod-name>` (rolling restart preferred)
+4. Check for memory leak in PaymentSessionCache — compare heap dump before/after incident

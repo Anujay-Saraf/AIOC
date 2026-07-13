@@ -1,0 +1,1 @@
+Timeout cascade in checkout gateway after payment-api retry storm causing 500s; database pool exhaustion and high latency

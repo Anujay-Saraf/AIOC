@@ -1,0 +1,50 @@
+[
+  {
+    "timestamp": "2026-07-07T19:05:00Z",
+    "metric_name": "traffic_qps",
+    "value": 900,
+    "window": "baseline"
+  },
+  {
+    "timestamp": "2026-07-07T19:09:00Z",
+    "metric_name": "traffic_qps",
+    "value": 4800,
+    "window": "incident"
+  },
+  {
+    "timestamp": "2026-07-07T19:05:00Z",
+    "metric_name": "cost_per_minute",
+    "value": 20,
+    "window": "baseline"
+  },
+  {
+    "timestamp": "2026-07-07T19:09:00Z",
+    "metric_name": "cost_per_minute",
+    "value": 120,
+    "window": "incident"
+  },
+  {
+    "timestamp": "2026-07-07T19:05:00Z",
+    "metric_name": "latency_ms",
+    "value": 45,
+    "window": "baseline"
+  },
+  {
+    "timestamp": "2026-07-07T19:09:00Z",
+    "metric_name": "latency_ms",
+    "value": 1400,
+    "window": "incident"
+  },
+  {
+    "timestamp": "2026-07-07T19:05:00Z",
+    "metric_name": "error_rate",
+    "value": 0.001,
+    "window": "baseline"
+  },
+  {
+    "timestamp": "2026-07-07T19:09:00Z",
+    "metric_name": "error_rate",
+    "value": 0.19,
+    "window": "incident"
+  }
+]

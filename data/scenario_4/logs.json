@@ -1,0 +1,34 @@
+[
+  {
+    "timestamp": "2026-07-07T18:15:00Z",
+    "level": "INFO",
+    "service": "catalog-api",
+    "message": "Traffic surge detected as product launch campaign goes live"
+  },
+  {
+    "timestamp": "2026-07-07T18:15:01Z",
+    "level": "ERROR",
+    "service": "catalog-api",
+    "error_type": "retry",
+    "message": "Retry storm detected while upstream requests start timing out"
+  },
+  {
+    "timestamp": "2026-07-07T18:15:02Z",
+    "level": "ERROR",
+    "service": "catalog-api",
+    "error_type": "cost",
+    "message": "Spend spike detected as request volume and cache misses increase"
+  },
+  {
+    "timestamp": "2026-07-07T18:15:03Z",
+    "level": "ERROR",
+    "service": "catalog-api",
+    "message": "Throttle guard tripped due to elevated traffic and retry amplification"
+  },
+  {
+    "timestamp": "2026-07-07T18:15:04Z",
+    "level": "CRITICAL",
+    "service": "catalog-api",
+    "message": "Traffic saturation causing elevated spend and request timeouts"
+  }
+]

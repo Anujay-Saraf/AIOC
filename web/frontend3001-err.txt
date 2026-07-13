@@ -1,0 +1,9 @@
+^C^C Failed to start server
+Error: listen EADDRINUSE: address already in use 127.0.0.1:3001
+    at <unknown> (Error: listen EADDRINUSE: address already in use 127.0.0.1:3001) {
+  code: 'EADDRINUSE',
+  errno: -4091,
+  syscall: 'listen',
+  address: '127.0.0.1',
+  port: 3001
+}

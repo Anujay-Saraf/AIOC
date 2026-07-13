@@ -1,0 +1,62 @@
+{
+  "scenario_1": {
+    "service": "payment-api",
+    "timestamp": "2026-07-07T14:32:15Z",
+    "alert_description": "Database connection pool exhaustion detected",
+    "expected_hypothesis": "Database Connection Pool Exhaustion",
+    "min_confidence": 0.55,
+    "max_confidence": 0.95,
+    "required_evidence_terms": ["Connection", "CPU", "deployment"],
+    "required_ruled_out_terms": ["Memory", "Downstream"],
+    "required_troubleshooting_terms": ["database pool settings", "roll back"],
+    "required_stakeholder_terms": ["Business update", "Engineering update"]
+  },
+  "scenario_2": {
+    "service": "order-processor",
+    "timestamp": "2026-07-07T16:30:00Z",
+    "alert_description": "Memory leak detected - GC pause times increasing",
+    "expected_hypothesis": "Memory Leak",
+    "min_confidence": 0.50,
+    "max_confidence": 0.90,
+    "required_evidence_terms": ["Memory", "GC"],
+    "required_ruled_out_terms": ["Deployment", "Connection"],
+    "required_troubleshooting_terms": ["heap", "restart"],
+    "required_stakeholder_terms": ["memory leak", "Engineering update"]
+  },
+  "scenario_3": {
+    "service": "checkout-gateway",
+    "timestamp": "2026-07-07T17:05:05Z",
+    "alert_description": "Cascading failure - downstream service timeout",
+    "expected_hypothesis": "Cascading Failure - Downstream Service Timeout",
+    "min_confidence": 0.50,
+    "max_confidence": 0.92,
+    "required_evidence_terms": ["Error rate", "Timeout", "Latency"],
+    "required_ruled_out_terms": ["Resource", "Memory"],
+    "required_troubleshooting_terms": ["downstream", "circuit breaking"],
+    "required_stakeholder_terms": ["downstream", "Business update"]
+  },
+  "scenario_4": {
+    "service": "catalog-api",
+    "timestamp": "2026-07-07T18:15:00Z",
+    "alert_description": "Traffic surge causing elevated spend and timeouts",
+    "expected_hypothesis": "Traffic Surge and Cost Overrun",
+    "min_confidence": 0.55,
+    "max_confidence": 0.95,
+    "required_evidence_terms": ["traffic", "cost", "Retry"],
+    "required_ruled_out_terms": ["Memory", "Database"],
+    "required_troubleshooting_terms": ["throttle", "cost"],
+    "required_stakeholder_terms": ["Business update", "Engineering update"]
+  },
+  "scenario_5": {
+    "service": "search-api",
+    "timestamp": "2026-07-07T19:09:00Z",
+    "alert_description": "Latency spike from cache stampede",
+    "expected_hypothesis": "Cache Stampede and Retry Amplification",
+    "min_confidence": 0.55,
+    "max_confidence": 0.95,
+    "required_evidence_terms": ["Cache", "Latency", "cost"],
+    "required_ruled_out_terms": ["Deployment", "Database"],
+    "required_troubleshooting_terms": ["coalescing", "TTL", "retry"],
+    "required_stakeholder_terms": ["Engineering update", "Ops update"]
+  }
+}

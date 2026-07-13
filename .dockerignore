@@ -1,0 +1,14 @@
+.git
+.pytest_cache
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+venv
+web/node_modules
+web/.next
+web/.turbo
+node_modules
+build_sandboxes.zip
+*.apk
+resume-server.log

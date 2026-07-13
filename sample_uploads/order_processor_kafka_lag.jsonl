@@ -1,0 +1,13 @@
+{"timestamp":"2026-07-12T07:30:00.000Z","level":"INFO","service":"order-processor","message":"Kafka consumer group lag: 0 messages","topic":"orders","consumer_group":"order-processor-prod"}
+{"timestamp":"2026-07-12T07:31:00.000Z","level":"WARN","service":"order-processor","message":"Kafka consumer lag increasing: 1240 messages behind","topic":"orders","consumer_group":"order-processor-prod","lag":1240}
+{"timestamp":"2026-07-12T07:32:00.000Z","level":"WARN","service":"order-processor","message":"Worker thread blocked waiting for payment-api response","duration_ms":8200,"downstream":"payment-api","trace_id":"ord-001"}
+{"timestamp":"2026-07-12T07:32:30.000Z","level":"ERROR","service":"order-processor","message":"payment-api call failed after 3 retries","downstream":"payment-api","status_code":503,"trace_id":"ord-002","retry_count":3}
+{"timestamp":"2026-07-12T07:33:00.000Z","level":"ERROR","service":"order-processor","message":"Order enrichment failed: inventory-service timeout","downstream":"inventory-service","duration_ms":5000,"trace_id":"ord-003"}
+{"timestamp":"2026-07-12T07:33:10.000Z","level":"WARN","service":"order-processor","message":"Kafka consumer lag: 8400 messages — processing throughput degraded","topic":"orders","consumer_group":"order-processor-prod","lag":8400}
+{"timestamp":"2026-07-12T07:33:30.000Z","level":"ERROR","service":"order-processor","message":"JVM heap memory 87% (6.9GB / 8GB) — potential memory leak","heap_used_mb":6963,"heap_max_mb":8192}
+{"timestamp":"2026-07-12T07:34:00.000Z","level":"ERROR","service":"order-processor","message":"Dead letter queue depth: 2840 orders failed processing","dlq":"orders-dlq","depth":2840}
+{"timestamp":"2026-07-12T07:34:15.000Z","level":"CRITICAL","service":"order-processor","message":"Kafka consumer committed offset lag: 42,000 — critical backlog","lag":42000}
+{"timestamp":"2026-07-12T07:34:30.000Z","level":"ERROR","service":"order-processor","message":"Out of memory: worker-thread-12 killed","thread":"worker-thread-12","heap_used_mb":8100,"heap_max_mb":8192}
+{"timestamp":"2026-07-12T07:35:00.000Z","level":"INFO","service":"order-processor","message":"Pod restarting — OOMKilled","restart_count":2,"reason":"OOMKilled"}
+{"timestamp":"2026-07-12T07:35:30.000Z","level":"WARN","service":"order-processor","message":"Cold start: reconnecting to Kafka and rebuilding consumer state","startup_phase":"consumer-init"}
+{"timestamp":"2026-07-12T07:36:00.000Z","level":"WARN","service":"order-processor","message":"Kafka consumer lag after restart: 68,000 — backlog growing during restart","lag":68000}

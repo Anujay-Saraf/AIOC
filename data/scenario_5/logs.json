@@ -1,0 +1,34 @@
+[
+  {
+    "timestamp": "2026-07-07T19:09:00Z",
+    "level": "INFO",
+    "service": "search-api",
+    "message": "Cache warmup completed before evening traffic spike"
+  },
+  {
+    "timestamp": "2026-07-07T19:09:01Z",
+    "level": "ERROR",
+    "service": "search-api",
+    "error_type": "retry",
+    "message": "Retry storm detected after cache miss amplification"
+  },
+  {
+    "timestamp": "2026-07-07T19:09:02Z",
+    "level": "ERROR",
+    "service": "search-api",
+    "message": "Traffic surge pushed cache miss rate above threshold"
+  },
+  {
+    "timestamp": "2026-07-07T19:09:03Z",
+    "level": "ERROR",
+    "service": "search-api",
+    "error_type": "cost",
+    "message": "Spend spike detected as repeated retries compound request load"
+  },
+  {
+    "timestamp": "2026-07-07T19:09:04Z",
+    "level": "CRITICAL",
+    "service": "search-api",
+    "message": "Latency spike from cache stampede and retry amplification"
+  }
+]
